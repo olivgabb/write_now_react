@@ -1,8 +1,8 @@
-# Minuta
+# WriteNow
 
 Front-end para um agente que lê editais (PDF ou HTML) e propõe soluções para o problema descrito. Feito com Vite, React e TypeScript.
 
-O nome "Minuta" é provisório. Troque em `src/config.ts` (`APP_NAME`).
+O nome "WriteNow" é provisório. Troque em `src/config.ts` (`APP_NAME`).
 
 ## Telas
 
