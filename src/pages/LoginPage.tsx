@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import Carimbo from '../components/Carimbo'
 import { APP_NAME, USE_MOCK } from '../config'
@@ -90,6 +90,10 @@ export default function LoginPage() {
           <button type="submit" className="botao botao-primario botao-cheio" disabled={enviando}>
             {enviando ? 'Entrando…' : 'Entrar'}
           </button>
+
+          <p className="nota">
+            Ainda não tem conta? <Link to="/registro">Criar conta</Link>
+          </p>
 
           {USE_MOCK && (
             <p className="nota">Modo demonstração: qualquer e-mail e senha funcionam.</p>

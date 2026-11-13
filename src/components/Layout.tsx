@@ -13,6 +13,9 @@ export default function Layout() {
         </Link>
         <div className="topbar-usuario">
           <span className="topbar-email">{usuario?.email}</span>
+          <Link to="/perfil" className="botao botao-discreto">
+            Perfil
+          </Link>
           <button type="button" className="botao botao-discreto" onClick={sair}>
             Sair
           </button>
