@@ -1,6 +1,5 @@
 import { API_URL, USE_MOCK } from '../config'
-import type { DadosPerfil, DadosRegistro, Edital, Mensagem, RespostaLogin, Usuario } from '../types'
-import type { Edital, Mensagem, Proposta, RespostaLogin } from '../types'
+import type { DadosPerfil, DadosRegistro, Edital, Mensagem, Proposta, RespostaLogin, Usuario } from '../types'
 import { novoId } from '../utils'
 import { mock } from './mock'
 import { EVENTO_NAO_AUTORIZADO, getToken } from './session'
@@ -56,6 +55,9 @@ async function requisitar<T>(caminho: string, init: RequestInit = {}): Promise<T
     throw new ApiError(resposta.status, detalhe || padrao)
   }
 
+  // Respostas sem corpo (ex.: 204 do DELETE) não têm JSON para ler.
+  if (resposta.status === 204) return undefined as T
+
   return (await resposta.json()) as T
 }
 
@@ -91,6 +93,7 @@ function normalizarPropostas(bruto: unknown): Proposta[] {
 //   POST /editais                     { url }           -> Edital
 //   POST /get-url                     { "pdf-url": url } -> Proposta[]  (agente lê o edital e propõe)
 //   GET  /editais/:id                                   -> Edital
+//   DELETE /editais/:id                                 -> 204 (remove o edital e as mensagens dele)
 //   GET  /editais/:id/mensagens                         -> Mensagem[]
 //   POST /editais/:id/propostas                         -> Mensagem  (agente lê o edital e propõe)
 //   POST /editais/:id/mensagens       { texto }         -> Mensagem  (resposta do agente)
@@ -122,6 +125,13 @@ export const api = {
 
   criarEdital: (url: string): Promise<Edital> =>
     USE_MOCK ? mock.criarEdital(url) : requisitar('/editais', { method: 'POST', body: JSON.stringify({ url }) }),
+
+  // Remove o edital do histórico do usuário.
+  // PONTO DE INTEGRAÇÃO: DELETE /editais/:id. O backend pode responder 204 sem corpo.
+  excluirEdital: (id: string): Promise<void> =>
+    USE_MOCK
+      ? mock.excluirEdital(id)
+      : requisitar<void>(`/editais/${encodeURIComponent(id)}`, { method: 'DELETE' }),
 
   obterEdital: (id: string): Promise<Edital> =>
     USE_MOCK ? mock.obterEdital(id) : requisitar(`/editais/${encodeURIComponent(id)}`),
