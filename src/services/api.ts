@@ -1,6 +1,5 @@
 import { API_URL, USE_MOCK } from '../config'
-import type { DadosPerfil, DadosRegistro, Edital, Mensagem, RespostaLogin, Usuario } from '../types'
-import type { Edital, Mensagem, Proposta, RespostaLogin } from '../types'
+import type { DadosPerfil, DadosRegistro, Edital, Mensagem, Proposta, RespostaLogin, Usuario } from '../types'
 import { novoId } from '../utils'
 import { mock } from './mock'
 import { EVENTO_NAO_AUTORIZADO, getToken } from './session'
