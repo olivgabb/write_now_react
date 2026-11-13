@@ -1238,3 +1238,267 @@ textarea {
     animation-duration: 3s;
   }
 }
+
+/* ---------- Sobre nós ---------- */
+.sobre-pagina {
+  min-height: 100%;
+  padding: clamp(1.25rem, 4vw, 3.5rem) 1.25rem 3rem;
+}
+
+.sobre-conteudo {
+  width: min(100%, 1040px);
+  margin: 0 auto;
+}
+
+.sobre-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--suave);
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: clamp(2rem, 5vw, 4rem);
+}
+
+.sobre-voltar:hover {
+  color: var(--tinta);
+}
+
+.sobre-voltar span {
+  font-size: 1.25rem;
+}
+
+.sobre-hero {
+  max-width: 820px;
+  padding-bottom: clamp(3rem, 7vw, 5.5rem);
+}
+
+.sobre-selo {
+  display: inline-block;
+  color: var(--pasta);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin-bottom: 1rem;
+}
+
+.sobre-hero h1 {
+  max-width: 15ch;
+  font-size: clamp(2.6rem, 6.5vw, 5rem);
+  line-height: 0.99;
+  margin-bottom: 1.5rem;
+}
+
+.sobre-hero h1 span {
+  color: var(--tinta);
+}
+
+.sobre-lead {
+  max-width: 62ch;
+  color: var(--suave);
+  font-size: clamp(1.08rem, 2vw, 1.25rem);
+}
+
+.sobre-resumo {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+  max-width: 760px;
+  margin-top: 2rem;
+  padding: 1.25rem 1.4rem;
+  background: var(--folha);
+  border: 1px solid var(--linha);
+  border-left: 4px solid var(--tinta);
+  border-radius: var(--raio);
+}
+
+.sobre-resumo p {
+  color: var(--suave);
+}
+
+.sobre-resumo-marca {
+  display: grid;
+  flex: 0 0 2.8rem;
+  width: 2.8rem;
+  height: 2.8rem;
+  place-items: center;
+  border-radius: 50%;
+  background: #fbe9df;
+  color: var(--tinta);
+  font: 700 1.35rem var(--fonte-titulo);
+}
+
+.sobre-secao {
+  padding: clamp(2.5rem, 6vw, 4.5rem) 0;
+  border-top: 1px solid var(--linha);
+}
+
+.sobre-cabecalho-secao {
+  max-width: 660px;
+  margin-bottom: 1.8rem;
+}
+
+.sobre-cabecalho-secao h2,
+.sobre-fechamento h2 {
+  font-size: clamp(1.8rem, 4vw, 2.7rem);
+  line-height: 1.08;
+  margin-bottom: 0.8rem;
+}
+
+.sobre-cabecalho-secao > p,
+.sobre-fechamento p {
+  color: var(--suave);
+  max-width: 62ch;
+}
+
+.sobre-publicos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.sobre-publico-card {
+  min-height: 210px;
+  padding: 1.4rem;
+  background: var(--folha);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+}
+
+.sobre-card-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.4rem;
+}
+
+.sobre-numero {
+  color: var(--tinta);
+  font: 700 1rem var(--fonte-titulo);
+}
+
+.sobre-etiqueta {
+  color: var(--pasta);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+.sobre-publico-card h3,
+.sobre-etapa h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.55rem;
+}
+
+.sobre-publico-card p,
+.sobre-etapa p {
+  color: var(--suave);
+  font-size: 0.96rem;
+}
+
+.sobre-como-funciona {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(2rem, 6vw, 5rem);
+}
+
+.sobre-etapas {
+  display: grid;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sobre-etapa {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.sobre-etapa-numero {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  background: #e0e9e3;
+  color: var(--pasta);
+  border-radius: 50%;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.sobre-fechamento {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  background: #e0e9e3;
+  border: 1px solid #c4d4c9;
+  border-radius: var(--raio);
+}
+
+.sobre-fechamento h2 {
+  max-width: 19ch;
+}
+
+.sobre-fechamento .botao {
+  flex: 0 0 auto;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.sobre-fechamento .botao span {
+  margin-left: 0.4rem;
+}
+
+.sobre-rodape {
+  padding-top: 1.5rem;
+  color: var(--suave);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.sobre-rodape span {
+  color: var(--tinta);
+  padding: 0 0.35rem;
+}
+
+@media (max-width: 700px) {
+  .sobre-publicos {
+    grid-template-columns: 1fr;
+  }
+
+  .sobre-publico-card {
+    min-height: auto;
+  }
+
+  .sobre-como-funciona {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .sobre-fechamento {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 560px) {
+  .sobre-resumo {
+    align-items: flex-start;
+  }
+
+  .topbar-usuario {
+    gap: 0.35rem;
+  }
+
+  .topbar-usuario .botao {
+    padding: 0.45rem 0.55rem;
+    font-size: 0.82rem;
+  }
+}
+}

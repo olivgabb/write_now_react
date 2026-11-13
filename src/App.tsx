@@ -6,6 +6,7 @@ import EditalPage from './pages/EditalPage'
 import LoginPage from './pages/LoginPage'
 import PerfilPage from './pages/PerfilPage'
 import RegistroPage from './pages/RegistroPage'
+import SobreNosPage from './pages/SobreNosPage'
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route index element={<EditalPage />} />
+          <Route path="sobre-nos" element={<SobreNosPage />} />
           <Route path="edital/:id" element={<ChatPage />} />
           <Route path="perfil" element={<PerfilPage />} />
         </Route>
