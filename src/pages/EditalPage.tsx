@@ -1,18 +1,25 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
+import AnaliseEmAndamento from '../components/Loading'
 import EditalCard from '../components/EditalCard'
 import { api } from '../services/api'
 import type { Edital } from '../types'
 import { mensagemDeErro, primeiroNome, saudacao, validarUrlEdital } from '../utils'
 
+function foiCancelado(erro: unknown): boolean {
+  return erro instanceof DOMException && erro.name === 'AbortError'
+}
+
 export default function EditalPage() {
   const navegar = useNavigate()
   const { usuario } = useAuth()
   const [url, setUrl] = useState('')
+  const [urlAnalisada, setUrlAnalisada] = useState('')
   const [erro, setErro] = useState<string | null>(null)
-  const [enviando, setEnviando] = useState(false)
+  const [analisando, setAnalisando] = useState(false)
   const [historico, setHistorico] = useState<Edital[] | null>(null)
+  const controleRef = useRef<AbortController | null>(null)
 
   const nome = primeiroNome(usuario?.nome ?? '')
 
@@ -27,23 +34,44 @@ export default function EditalPage() {
     }
   }, [])
 
+  // Se a tela for fechada durante a análise, cancela a requisição pendente.
+  useEffect(() => () => controleRef.current?.abort(), [])
+
   async function aoEnviar(evento: FormEvent) {
     evento.preventDefault()
-    if (enviando) return
+    if (analisando) return
     const resultado = validarUrlEdital(url)
     if (!resultado.ok) {
       setErro(resultado.erro)
       return
     }
     setErro(null)
-    setEnviando(true)
+    setUrlAnalisada(resultado.url)
+    setAnalisando(true)
+
+    const controle = new AbortController()
+    controleRef.current = controle
     try {
+      const propostas = await api.analisarUrl(resultado.url, controle.signal)
       const edital = await api.criarEdital(resultado.url)
-      navegar(`/edital/${edital.id}`)
+      navegar(`/edital/${edital.id}`, { state: { propostas } })
     } catch (e) {
+      if (foiCancelado(e)) return
       setErro(mensagemDeErro(e))
-      setEnviando(false)
+      setAnalisando(false)
+    } finally {
+      controleRef.current = null
     }
+  }
+
+  function cancelarAnalise() {
+    controleRef.current?.abort()
+    controleRef.current = null
+    setAnalisando(false)
+  }
+
+  if (analisando) {
+    return <AnaliseEmAndamento url={urlAnalisada} onCancelar={cancelarAnalise} />
   }
 
   return (
@@ -69,8 +97,8 @@ export default function EditalPage() {
             aria-invalid={erro ? true : undefined}
             aria-describedby={erro ? 'url-erro' : 'url-dica'}
           />
-          <button type="submit" className="botao botao-primario" disabled={enviando}>
-            {enviando ? 'Enviando…' : 'Analisar edital'}
+          <button type="submit" className="botao botao-primario">
+            Analisar edital
           </button>
         </div>
         {erro ? (
