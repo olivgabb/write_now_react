@@ -6,13 +6,23 @@ import StatusTag from '../components/StatusTag'
 import { api } from '../services/api'
 import type { Edital, Mensagem } from '../types'
 import { dataCurta, hostDe, mensagemDeErro, novoId } from '../utils'
+import type { Proposta } from '../types'
+import { useLocation } from 'react-router-dom'
+
 
 type Estado = 'carregando' | 'lendo' | 'pronto' | 'erro'
+
+const TEXTO_ABERTURA = 'Analisei o edital. Estas são as propostas sugeridas:'
 
 const SUGESTOES = ['Reduza o custo', 'Detalhe os riscos', 'Priorize o menor prazo']
 
 // A partir desta largura o painel do edital fica ao lado do chat; abaixo, ele cobre a tela.
 const LARGURA_PAINEL_LADO = '(min-width: 1200px)'
+
+interface EstadoDeNavegacao {
+  propostas?: Proposta[]
+}
+
 
 export default function ChatPage() {
   const { id = '' } = useParams()
@@ -28,12 +38,31 @@ export default function ChatPage() {
   const fimRef = useRef<HTMLDivElement>(null)
   const campoRef = useRef<HTMLTextAreaElement>(null)
   const carregandoId = useRef<string | null>(null)
+  const localizacao = useLocation()
+  const propostasIniciais = (localizacao.state as EstadoDeNavegacao | null)?.propostas
+
+
 
   const carregar = useCallback(async () => {
     setEstado('carregando')
     setErroCarga(null)
     try {
       const [dados, historico] = await Promise.all([api.obterEdital(id), api.listarMensagens(id)])
+
+      if (historico.length === 0 && propostasIniciais?.length) {
+        setEdital({ ...dados, status: 'propostas', totalPropostas: propostasIniciais.length })
+        setMensagens([
+          {
+            id: novoId(),
+            autor: 'agente',
+            texto: TEXTO_ABERTURA,
+            propostas: propostasIniciais,
+            criadoEm: new Date().toISOString(),
+          },
+        ])
+        setEstado('pronto')
+        return
+      }
       setEdital(historico.length === 0 ? { ...dados, status: 'analisando' } : dados)
       setMensagens(historico)
       if (historico.length === 0) {

@@ -1,5 +1,6 @@
 import { API_URL, USE_MOCK } from '../config'
-import type { Edital, Mensagem, RespostaLogin } from '../types'
+import type { Edital, Mensagem, Proposta, RespostaLogin } from '../types'
+import { novoId } from '../utils'
 import { mock } from './mock'
 import { EVENTO_NAO_AUTORIZADO, getToken } from './session'
 
@@ -24,7 +25,9 @@ async function requisitar<T>(caminho: string, init: RequestInit = {}): Promise<T
         ...init.headers,
       },
     })
-  } catch {
+  } catch (erro) {
+    // Cancelamento pelo usuário não é erro de conexão: repassa para quem chamou tratar.
+    if (erro instanceof DOMException && erro.name === 'AbortError') throw erro
     throw new ApiError(0, 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.')
   }
 
@@ -48,10 +51,35 @@ async function requisitar<T>(caminho: string, init: RequestInit = {}): Promise<T
   return (await resposta.json()) as T
 }
 
+// Valida o formato devolvido pelo agente e completa campos opcionais.
+// Aceita a lista de propostas direto ou dentro de { propostas: [...] }.
+function normalizarPropostas(bruto: unknown): Proposta[] {
+  const lista = Array.isArray(bruto) ? bruto : (bruto as { propostas?: unknown } | null)?.propostas
+  if (!Array.isArray(lista) || lista.length === 0) {
+    throw new ApiError(502, 'O agente não retornou propostas para este edital.')
+  }
+  return lista.map((item, i) => {
+    const p = item as Partial<Proposta>
+    if (!p.titulo || !Array.isArray(p.etapas) || !Array.isArray(p.riscos)) {
+      throw new ApiError(502, 'A resposta do servidor veio em formato inesperado.')
+    }
+    return {
+      id: p.id ?? `${novoId()}-${i}`,
+      titulo: p.titulo,
+      resumo: p.resumo ?? '',
+      etapas: p.etapas,
+      prazo: p.prazo ?? '',
+      investimento: p.investimento ?? '',
+      riscos: p.riscos,
+    }
+  })
+}
+
 // Contrato esperado do backend (veja o README):
 //   POST /auth/login                  { email, senha }  -> { token, usuario }
 //   GET  /editais                                       -> Edital[]
 //   POST /editais                     { url }           -> Edital
+//   POST /get-url                     { "pdf-url": url } -> Proposta[]  (agente lê o edital e propõe)
 //   GET  /editais/:id                                   -> Edital
 //   GET  /editais/:id/mensagens                         -> Mensagem[]
 //   POST /editais/:id/propostas                         -> Mensagem  (agente lê o edital e propõe)
@@ -63,6 +91,16 @@ export const api = {
       : requisitar('/auth/login', { method: 'POST', body: JSON.stringify({ email, senha }) }),
 
   listarEditais: (): Promise<Edital[]> => (USE_MOCK ? mock.listarEditais() : requisitar('/editais')),
+
+  // Envia o link do edital ao agente e devolve as propostas geradas.
+  analisarUrl: (pdfUrl: string, signal?: AbortSignal): Promise<Proposta[]> =>
+    USE_MOCK
+      ? mock.analisarUrl(pdfUrl, signal)
+      : requisitar<unknown>('/get-url', {
+          method: 'POST',
+          body: JSON.stringify({ 'pdf-url': pdfUrl }),
+          signal,
+        }).then(normalizarPropostas),
 
   criarEdital: (url: string): Promise<Edital> =>
     USE_MOCK ? mock.criarEdital(url) : requisitar('/editais', { method: 'POST', body: JSON.stringify({ url }) }),

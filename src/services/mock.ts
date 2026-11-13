@@ -267,6 +267,21 @@ export const mock = {
     return mensagem
   },
 
+    async analisarUrl(_pdfUrl: string, signal?: AbortSignal): Promise<Proposta[]> {
+    await new Promise<void>((resolve, reject) => {
+      const timer = setTimeout(resolve, 2500)
+      signal?.addEventListener(
+        'abort',
+        () => {
+          clearTimeout(timer)
+          reject(new DOMException('Análise cancelada', 'AbortError'))
+        },
+        { once: true },
+      )
+    })
+    return propostasDeExemplo()
+  },
+
   async enviarMensagem(id: string, texto: string): Promise<Mensagem> {
     await dormir(1400)
     const todas = ler<Record<string, Mensagem[]>>(CHAVE_MENSAGENS, {})
