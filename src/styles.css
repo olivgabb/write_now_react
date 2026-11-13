@@ -131,7 +131,8 @@ label {
 }
 
 input,
-textarea {
+textarea,
+select {
   font: inherit;
   color: inherit;
   background: var(--folha);
@@ -142,11 +143,13 @@ textarea {
 }
 
 input:focus-visible,
-textarea:focus-visible {
+textarea:focus-visible,
+select:focus-visible {
   border-color: var(--tinta);
 }
 
-input[aria-invalid='true'] {
+input[aria-invalid='true'],
+textarea[aria-invalid='true'] {
   border-color: var(--protocolo);
 }
 
@@ -953,6 +956,174 @@ a.botao {
     width: auto;
     z-index: auto;
     box-shadow: none;
+  }
+}
+/* ---------- Registro e perfil ---------- */
+.campo-opcional {
+  font-weight: 400;
+  color: var(--suave);
+}
+
+.campo-dica,
+.campo-erro {
+  font-size: 0.88rem;
+}
+
+.campo-dica {
+  color: var(--suave);
+}
+
+.campo-erro {
+  color: #7d1f19;
+  font-weight: 600;
+}
+
+textarea {
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.login-form .nota a {
+  font-weight: 600;
+}
+
+.registro-form {
+  max-width: 440px;
+}
+
+/* O formulário é longo: começa abaixo do carimbo em vez de centralizar. */
+.registro .login-principal {
+  align-items: flex-start;
+  padding-top: 7.5rem;
+}
+
+.registro .login-carimbo {
+  width: 88px;
+  height: 88px;
+}
+
+@media (min-width: 900px) {
+  .registro .login-principal {
+    padding-top: 3.5rem;
+  }
+
+  .registro .login-carimbo {
+    width: 120px;
+    height: 120px;
+  }
+
+  .registro-form h2 {
+    margin-bottom: 2.75rem;
+  }
+}
+
+.perfil-pagina {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 6vh, 3.5rem) 1.25rem 4rem;
+  display: grid;
+  gap: 1.75rem;
+}
+
+.perfil-cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+}
+
+.perfil-avatar {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--tinta);
+  color: #fff;
+  font: 700 1.6rem/1 var(--fonte-titulo);
+  letter-spacing: -0.02em;
+}
+
+.perfil-identidade {
+  flex: 1;
+  min-width: 0;
+}
+
+.perfil-identidade h1 {
+  font-size: clamp(1.7rem, 4vw, 2.4rem);
+  line-height: 1.1;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.perfil-identidade .lead {
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+
+.perfil-aviso {
+  background: #e8f3ed;
+  border-left: 4px solid var(--pasta);
+  color: var(--pasta);
+  font-weight: 600;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0 var(--raio) var(--raio) 0;
+  font-size: 0.95rem;
+}
+
+.perfil-secoes {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.perfil-secoes section {
+  background: var(--folha);
+  border: 1px solid var(--linha);
+  border-top: 5px solid var(--tinta);
+  border-radius: var(--raio);
+  padding: 1.1rem 1.4rem 1.3rem;
+}
+
+.perfil-secoes section:nth-child(2) {
+  border-top-color: var(--pasta);
+}
+
+.perfil-secoes h2 {
+  font-size: 1.05rem;
+  margin-bottom: 0.45rem;
+}
+
+.perfil-secoes p {
+  max-width: 64ch;
+}
+
+.perfil-secoes .dica {
+  margin-top: 0;
+}
+
+.perfil-bio {
+  white-space: pre-line;
+}
+
+.perfil-form {
+  max-width: 560px;
+}
+
+.perfil-acoes {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.perfil-acoes .botao-discreto {
+  padding: 0.8rem 1.25rem;
+  font-size: 1rem;
+}
+
+@media (max-width: 560px) {
+  .perfil-cabecalho .botao {
+    width: 100%;
   }
 }
 /* Tela de análise em andamento */

@@ -2,6 +2,24 @@ export interface Usuario {
   id: string
   nome: string
   email: string
+  formacao?: string
+  biografia?: string
+}
+
+/** Campos pedidos na tela de registro. */
+export interface DadosRegistro {
+  nome: string
+  email: string
+  senha: string
+  formacao: string
+  biografia: string
+}
+
+/** Campos que o usuário pode editar depois, na tela de perfil. O e-mail não muda. */
+export interface DadosPerfil {
+  nome: string
+  formacao: string
+  biografia: string
 }
 
 /**

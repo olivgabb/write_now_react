@@ -1,11 +1,13 @@
-import type { Edital, Mensagem, Proposta, RespostaLogin } from '../types'
+import type { DadosPerfil, DadosRegistro, Edital, Mensagem, Proposta, RespostaLogin, Usuario } from '../types'
 import { hostDe, novoId } from '../utils'
+import { getUsuarioSalvo } from './session'
 
 // Backend de demonstração: guarda tudo no localStorage e devolve propostas de exemplo.
 // Serve para desenvolver o front-end sem o agente. Ative com VITE_USE_MOCK=true.
 
 const CHAVE_EDITAIS = 'minuta.mock.editais'
 const CHAVE_MENSAGENS = 'minuta.mock.mensagens'
+const CHAVE_USUARIOS = 'minuta.mock.usuarios'
 
 const dormir = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
 
@@ -25,6 +27,14 @@ function gravar(chave: string, valor: unknown): void {
     // ignorado
   }
 }
+
+// Contas criadas no registro, indexadas pelo e-mail. A senha não é guardada: o modo demonstração
+// aceita qualquer senha no login, e só o perfil precisa sobreviver entre sessões.
+function lerUsuarios(): Record<string, Usuario> {
+  return ler<Record<string, Usuario>>(CHAVE_USUARIOS, {})
+}
+
+const chaveDoEmail = (email: string) => email.trim().toLowerCase()
 
 function tituloDaUrl(url: string): string {
   try {
@@ -202,11 +212,44 @@ export const mock = {
     if (!email.trim() || !senha) {
       throw new Error('Informe e-mail e senha.')
     }
+    const cadastrado = lerUsuarios()[chaveDoEmail(email)]
     const nome = email.split('@')[0].replace(/[._-]+/g, ' ')
     return {
       token: `demo-${novoId()}`,
-      usuario: { id: 'demo', nome, email: email.trim() },
+      usuario: cadastrado ?? { id: 'demo', nome, email: email.trim() },
     }
+  },
+
+  async registrar(dados: DadosRegistro): Promise<RespostaLogin> {
+    await dormir(600)
+    const usuarios = lerUsuarios()
+    const chave = chaveDoEmail(dados.email)
+    if (usuarios[chave]) {
+      throw new Error('Este e-mail já está cadastrado. Tente entrar.')
+    }
+    const usuario: Usuario = {
+      id: novoId(),
+      nome: dados.nome.trim(),
+      email: dados.email.trim(),
+      formacao: dados.formacao.trim(),
+      biografia: dados.biografia.trim(),
+    }
+    gravar(CHAVE_USUARIOS, { ...usuarios, [chave]: usuario })
+    return { token: `demo-${novoId()}`, usuario }
+  },
+
+  async atualizarPerfil(dados: DadosPerfil): Promise<Usuario> {
+    await dormir(400)
+    const atual = getUsuarioSalvo()
+    if (!atual) throw new Error('Sua sessão expirou. Entre novamente.')
+    const usuario: Usuario = {
+      ...atual,
+      nome: dados.nome.trim(),
+      formacao: dados.formacao.trim(),
+      biografia: dados.biografia.trim(),
+    }
+    gravar(CHAVE_USUARIOS, { ...lerUsuarios(), [chaveDoEmail(usuario.email)]: usuario })
+    return usuario
   },
 
   async listarEditais(): Promise<Edital[]> {

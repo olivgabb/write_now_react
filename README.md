@@ -7,8 +7,10 @@ O nome "Minuta" é provisório. Troque em `src/config.ts` (`APP_NAME`).
 ## Telas
 
 1. **Login** (`/login`): e-mail e senha.
-2. **Link do edital** (`/`): saudação ao usuário, campo para a URL e histórico de editais em cartões (com miniatura, tag de estado e "editado há…").
-3. **Chat de propostas** (`/edital/:id`): o agente lê o edital, apresenta propostas e continua a conversa para ajustes.
+2. **Registro** (`/registro`): e-mail, senha, nome completo, formação acadêmica e biografia (opcional).
+3. **Perfil** (`/perfil`): mostra os dados da conta e permite editar nome, formação e biografia.
+4. **Link do edital** (`/`): saudação ao usuário, campo para a URL e histórico de editais em cartões (com miniatura, tag de estado e "editado há…").
+5. **Chat de propostas** (`/edital/:id`): o agente lê o edital, apresenta propostas e continua a conversa para ajustes.
 
 ## Como rodar
 
@@ -30,7 +32,9 @@ Todas as chamadas estão em `src/services/api.ts`. O token JWT vai no cabeçalho
 
 | Método | Rota | Corpo | Resposta |
 | --- | --- | --- | --- |
-| POST | `/auth/login` | `{ email, senha }` | `{ token, usuario: { id, nome, email } }` |
+| POST | `/auth/login` | `{ email, senha }` | `{ token, usuario: { id, nome, email, formacao?, biografia? } }` |
+| POST | `/auth/registro` | `{ nome, email, senha, formacao, biografia }` | `{ token, usuario }` (409 se o e-mail já existe) |
+| PUT | `/perfil` | `{ nome, formacao, biografia }` | `Usuario` |
 | GET | `/editais` | | `Edital[]` |
 | POST | `/editais` | `{ url }` | `Edital` |
 | GET | `/editais/:id` | | `Edital` |

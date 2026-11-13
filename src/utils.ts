@@ -1,3 +1,5 @@
+import type { DadosPerfil, DadosRegistro } from './types'
+
 export function novoId(): string {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
     return crypto.randomUUID()
@@ -75,6 +77,69 @@ export function validarUrlEdital(valor: string): ResultadoUrl {
     return { ok: false, erro: 'O link precisa começar com http:// ou https://' }
   }
   return { ok: true, url: url.toString() }
+}
+
+export function iniciais(nome: string): string {
+  const partes = nome.trim().split(/\s+/).filter(Boolean)
+  if (partes.length === 0) return '?'
+  const primeira = partes[0].charAt(0)
+  const ultima = partes.length > 1 ? partes[partes.length - 1].charAt(0) : ''
+  return (primeira + ultima).toUpperCase()
+}
+
+export const BIOGRAFIA_MAX = 500
+export const SENHA_MIN = 8
+
+export type ErrosDeCampo<T> = Partial<Record<keyof T, string>>
+
+function erroNome(nome: string): string | undefined {
+  const texto = nome.trim()
+  if (!texto) return 'Informe seu nome completo.'
+  if (texto.split(/\s+/).length < 2) return 'Informe nome e sobrenome.'
+  return undefined
+}
+
+function erroEmail(email: string): string | undefined {
+  const texto = email.trim()
+  if (!texto) return 'Informe seu e-mail.'
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(texto)) return 'Esse e-mail não parece válido. Exemplo: nome@dominio.com'
+  return undefined
+}
+
+function erroSenha(senha: string): string | undefined {
+  if (!senha) return 'Crie uma senha.'
+  if (senha.length < SENHA_MIN) return `A senha precisa ter pelo menos ${SENHA_MIN} caracteres.`
+  return undefined
+}
+
+function erroFormacao(formacao: string): string | undefined {
+  return formacao.trim() ? undefined : 'Informe sua formação acadêmica.'
+}
+
+function erroBiografia(biografia: string): string | undefined {
+  return biografia.length > BIOGRAFIA_MAX ? `A biografia pode ter até ${BIOGRAFIA_MAX} caracteres.` : undefined
+}
+
+function semVazios<T extends object>(erros: ErrosDeCampo<T>): ErrosDeCampo<T> {
+  return Object.fromEntries(Object.entries(erros).filter(([, valor]) => valor)) as ErrosDeCampo<T>
+}
+
+export function validarRegistro(dados: DadosRegistro): ErrosDeCampo<DadosRegistro> {
+  return semVazios<DadosRegistro>({
+    nome: erroNome(dados.nome),
+    email: erroEmail(dados.email),
+    senha: erroSenha(dados.senha),
+    formacao: erroFormacao(dados.formacao),
+    biografia: erroBiografia(dados.biografia),
+  })
+}
+
+export function validarPerfil(dados: DadosPerfil): ErrosDeCampo<DadosPerfil> {
+  return semVazios<DadosPerfil>({
+    nome: erroNome(dados.nome),
+    formacao: erroFormacao(dados.formacao),
+    biografia: erroBiografia(dados.biografia),
+  })
 }
 
 export function mensagemDeErro(erro: unknown): string {
