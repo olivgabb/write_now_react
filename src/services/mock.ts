@@ -273,6 +273,15 @@ export const mock = {
     return edital
   },
 
+  // Remove o edital e as mensagens dele do localStorage.
+  async excluirEdital(id: string): Promise<void> {
+    await dormir(200)
+    gravar(CHAVE_EDITAIS, lerEditais().filter((e) => e.id !== id))
+    const todas = ler<Record<string, Mensagem[]>>(CHAVE_MENSAGENS, {})
+    delete todas[id]
+    gravar(CHAVE_MENSAGENS, todas)
+  },
+
   async obterEdital(id: string): Promise<Edital> {
     await dormir(150)
     const edital = lerEditais().find((e) => e.id === id)

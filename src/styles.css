@@ -400,6 +400,49 @@ textarea[aria-invalid='true'] {
   gap: 1.1rem;
 }
 
+/* Envolve o card para posicionar o botão de excluir sem colocá-lo dentro do link */
+.edital-card-wrap {
+  position: relative;
+  height: 100%;
+}
+
+/* Botão "X": invisível até passar o mouse no card (ou focar o botão pelo teclado) */
+.edital-card-excluir {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 1.9rem;
+  height: 1.9rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  font: 600 1.35rem/1 var(--fonte-texto);
+  color: var(--suave);
+  background: var(--folha);
+  border: 1px solid var(--linha);
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.edital-card-wrap:hover .edital-card-excluir,
+.edital-card-excluir:focus-visible {
+  opacity: 1;
+}
+
+.edital-card-excluir:hover {
+  color: var(--protocolo);
+  border-color: var(--protocolo);
+}
+
+/* Telas de toque não têm hover: mantém o botão visível para não ficar inacessível */
+@media (hover: none) {
+  .edital-card-excluir {
+    opacity: 1;
+  }
+}
+
 /* Cartão de edital, no estilo do histórico do Google Docs */
 .edital-card {
   display: flex;
@@ -1457,4 +1500,5 @@ textarea {
     padding: 0.45rem 0.55rem;
     font-size: 0.82rem;
   }
+}
 }

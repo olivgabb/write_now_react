@@ -64,6 +64,19 @@ export default function EditalPage() {
     }
   }
 
+  // Remove o card na hora (otimista) e chama a API. Se a exclusão falhar, devolve o card à lista.
+  async function excluirEdital(edital: Edital) {
+    const anterior = historico
+    setHistorico((lista) => lista?.filter((e) => e.id !== edital.id) ?? lista)
+    try {
+      // PONTO DE INTEGRAÇÃO: DELETE /editais/:id (ver api.excluirEdital)
+      await api.excluirEdital(edital.id)
+    } catch (e) {
+      setHistorico(anterior)
+      setErro(mensagemDeErro(e))
+    }
+  }
+
   function cancelarAnalise() {
     controleRef.current?.abort()
     controleRef.current = null
@@ -123,7 +136,7 @@ export default function EditalPage() {
           <ul className="historico-grade">
             {historico.map((edital) => (
               <li key={edital.id}>
-                <EditalCard edital={edital} />
+                <EditalCard edital={edital} onExcluir={excluirEdital} />
               </li>
             ))}
           </ul>
